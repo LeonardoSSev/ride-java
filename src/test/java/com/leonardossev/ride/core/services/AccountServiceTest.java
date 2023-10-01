@@ -1,5 +1,6 @@
 package com.leonardossev.ride.core.services;
 
+import com.leonardossev.ride.core.validators.CpfValidator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import java.util.HashMap;
@@ -7,13 +8,13 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class AccountServiceSpec {
+public class AccountServiceTest {
 
     private AccountService accountService;
 
     @BeforeEach
     public void setUp() {
-        accountService = new AccountService();
+        accountService = new AccountService(new CpfValidator());
     }
 
     @Test

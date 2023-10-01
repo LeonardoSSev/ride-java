@@ -1,5 +1,6 @@
 package com.leonardossev.ride.core.services;
 
+import com.leonardossev.ride.core.validators.ICpfValidator;
 import java.sql.Date;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -7,55 +8,14 @@ import java.sql.*;
 
 public class AccountService {
 
-    public AccountService() {
-    }
+    ICpfValidator cpfValidator;
 
+    public AccountService(ICpfValidator cpfValidator) {
+        this.cpfValidator = cpfValidator;
+    }
 
     public void sendEmail(String email, String subject, String message) {
         System.out.println(email + " " + subject + " " + message);
-    }
-
-    public boolean validateCpf(String str) {
-        if (str != null && str.length() >= 11 && str.length() <= 14) {
-            str = str.replaceAll("\\.", "").replaceAll("-", "").replaceAll(" ", "");
-
-            final char firstChar = str.charAt(0);
-            if (!str.chars().allMatch(c -> c == firstChar)) {
-                try {
-                    int d1, d2;
-                    int dg1, dg2, rest;
-                    int digito;
-                    int nDigResult;
-                    d1 = d2 = 0;
-                    dg1 = dg2 = rest = 0;
-
-                    for (int nCount = 1; nCount < str.length() - 1; nCount++) {
-                        digito = Integer.parseInt(str.substring(nCount - 1, nCount));
-                        d1 = d1 + (11 - nCount) * digito;
-                        d2 = d2 + (12 - nCount) * digito;
-                    }
-
-                    rest = (d1 % 11);
-                    dg1 = (rest < 2) ? 0 : 11 - rest;
-                    d2 += 2 * dg1;
-                    rest = (d2 % 11);
-
-                    if (rest < 2)
-                        dg2 = 0;
-                    else
-                        dg2 = 11 - rest;
-
-                    String nDigVerific = str.substring(str.length() - 2);
-                    nDigResult = Integer.parseInt("" + dg1 + "" + dg2);
-                    return nDigVerific.equals(String.valueOf(nDigResult));
-                } catch (Exception e) {
-                    System.err.println("Error: " + e.getMessage());
-                    return false;
-                }
-            } else
-                return false;
-        } else
-            return false;
     }
 
     public Map<String, Object> signup(Map<String, Object> input) throws Exception {
@@ -79,43 +39,19 @@ public class AccountService {
                     // Valida e-mail
                     if (input.get("email").toString().matches("^(.+)@(.+)$")) {
                         // Valida CPF
-                        if (validateCpf(input.get("cpf").toString())) {
-                            // Valida placa do carro
-                            if (input.get("isDriver") != null && input.get("isDriver").equals(true)) {
-                                if (input.get("carPlate") != null && input.get("carPlate").toString().matches("[A-Z]{3}[0-9]{4}")) {
-                                    // Insere a conta no banco de dados
-                                    PreparedStatement insertStatement = connection.prepareStatement("INSERT INTO cccat13.account (account_id, name, email, cpf, car_plate, is_passenger, is_driver, date, is_verified, verification_code) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-                                    insertStatement.setObject(1, UUID.fromString(accountId));
-                                    insertStatement.setString(2, input.get("name").toString());
-                                    insertStatement.setString(3, input.get("email").toString());
-                                    insertStatement.setString(4, input.get("cpf").toString());
-                                    insertStatement.setString(5, input.get("carPlate").toString());
-                                    insertStatement.setBoolean(6, false);
-                                    insertStatement.setBoolean(7, true);
-                                    insertStatement.setDate(8, Date.valueOf(String.valueOf(date.toLocalDate())));
-                                    insertStatement.setBoolean(9, false);
-                                    insertStatement.setObject(10, UUID.fromString(verificationCode));
-                                    insertStatement.executeUpdate();
-
-                                    // Envie o e-mail de verificação
-                                    sendEmail(input.get("email").toString(), "Verification", "Please verify your code at first login " + verificationCode);
-
-                                    Map<String, Object> response = new HashMap<>();
-                                    response.put("accountId", accountId);
-                                    return response;
-                                } else {
-                                    throw new Exception("Invalid plate");
-                                }
-                            } else {
+                        this.cpfValidator.validate(input.get("cpf").toString());
+                        // Valida placa do carro
+                        if (input.get("isDriver") != null && input.get("isDriver").equals(true)) {
+                            if (input.get("carPlate") != null && input.get("carPlate").toString().matches("[A-Z]{3}[0-9]{4}")) {
                                 // Insere a conta no banco de dados
                                 PreparedStatement insertStatement = connection.prepareStatement("INSERT INTO cccat13.account (account_id, name, email, cpf, car_plate, is_passenger, is_driver, date, is_verified, verification_code) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
                                 insertStatement.setObject(1, UUID.fromString(accountId));
                                 insertStatement.setString(2, input.get("name").toString());
                                 insertStatement.setString(3, input.get("email").toString());
                                 insertStatement.setString(4, input.get("cpf").toString());
-                                insertStatement.setString(5, "");
-                                insertStatement.setBoolean(6, true);
-                                insertStatement.setBoolean(7, false);
+                                insertStatement.setString(5, input.get("carPlate").toString());
+                                insertStatement.setBoolean(6, false);
+                                insertStatement.setBoolean(7, true);
                                 insertStatement.setDate(8, Date.valueOf(String.valueOf(date.toLocalDate())));
                                 insertStatement.setBoolean(9, false);
                                 insertStatement.setObject(10, UUID.fromString(verificationCode));
@@ -127,9 +63,30 @@ public class AccountService {
                                 Map<String, Object> response = new HashMap<>();
                                 response.put("accountId", accountId);
                                 return response;
+                            } else {
+                                throw new Exception("Invalid plate");
                             }
                         } else {
-                            throw new Exception("Invalid cpf");
+                            // Insere a conta no banco de dados
+                            PreparedStatement insertStatement = connection.prepareStatement("INSERT INTO cccat13.account (account_id, name, email, cpf, car_plate, is_passenger, is_driver, date, is_verified, verification_code) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                            insertStatement.setObject(1, UUID.fromString(accountId));
+                            insertStatement.setString(2, input.get("name").toString());
+                            insertStatement.setString(3, input.get("email").toString());
+                            insertStatement.setString(4, input.get("cpf").toString());
+                            insertStatement.setString(5, "");
+                            insertStatement.setBoolean(6, true);
+                            insertStatement.setBoolean(7, false);
+                            insertStatement.setDate(8, Date.valueOf(String.valueOf(date.toLocalDate())));
+                            insertStatement.setBoolean(9, false);
+                            insertStatement.setObject(10, UUID.fromString(verificationCode));
+                            insertStatement.executeUpdate();
+
+                            // Envie o e-mail de verificação
+                            sendEmail(input.get("email").toString(), "Verification", "Please verify your code at first login " + verificationCode);
+
+                            Map<String, Object> response = new HashMap<>();
+                            response.put("accountId", accountId);
+                            return response;
                         }
                     } else {
                         throw new Exception("Invalid email");
