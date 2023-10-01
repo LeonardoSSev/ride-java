@@ -1,53 +1,56 @@
 package com.leonardossev.ride.core.services;
 
+import com.leonardossev.ride.adapters.inbound.http.dto.SignupAccount;
 import com.leonardossev.ride.core.model.Account;
+import com.leonardossev.ride.core.ports.inbound.SignupInboundPort;
 import com.leonardossev.ride.core.ports.outbound.AccountPersistenceOutboundPort;
 import com.leonardossev.ride.core.validators.ICpfValidator;
+import org.springframework.stereotype.Service;
 import java.sql.Date;
 import java.time.LocalDateTime;
 import java.util.*;
 
-public class AccountService {
+@Service
+public class SignupService implements SignupInboundPort {
 
     ICpfValidator cpfValidator;
     AccountPersistenceOutboundPort accountPersistenceOutboundPort;
 
-    public AccountService(ICpfValidator cpfValidator, AccountPersistenceOutboundPort accountPersistenceOutboundPort) {
+    public SignupService(ICpfValidator cpfValidator, AccountPersistenceOutboundPort accountPersistenceOutboundPort) {
         this.cpfValidator = cpfValidator;
         this.accountPersistenceOutboundPort = accountPersistenceOutboundPort;
     }
 
-    public Map<String, Object> signup(Map<String, Object> input) throws Exception {
+    @Override
+    public String execute(SignupAccount signupAccount) {
         try {
             String accountId = UUID.randomUUID().toString();
             String verificationCode = UUID.randomUUID().toString();
             LocalDateTime date = LocalDateTime.now();
 
-            this.validateExistingAccount(input.get("email").toString());
-            this.validateName(input.get("name").toString());
-            this.validateEmail(input.get("email").toString());
-            this.cpfValidator.validate(input.get("cpf").toString());
+            this.validateSignupInfo(signupAccount);
 
-            if (this.isDriver(input.get("isDriver"))) {
-                this.validatePlate(input.get("carPlate").toString());
-            }
-
-            Account account = Account.fromMap(input, accountId, verificationCode, Date.valueOf(String.valueOf(date.toLocalDate())));
+            Account account = Account.fromSignupAccount(signupAccount, accountId, verificationCode, Date.valueOf(String.valueOf(date.toLocalDate())));
             this.accountPersistenceOutboundPort.save(account);
 
-            this.sendEmail(input.get("email").toString(), "Verification", "Please verify your code at first login " + verificationCode);
-            Map<String, Object> response = new HashMap<>();
+            this.sendEmail(signupAccount.email(), "Verification", "Please verify your code at first login " + verificationCode);
 
-            response.put("accountId", accountId);
-            return response;
+            return accountId;
         } catch (Exception e) {
             System.err.printf("Error: %s", e.getMessage());
             throw e;
         }
     }
 
-    public Optional<Account> getAccount(String accountId) {
-        return this.accountPersistenceOutboundPort.findById(UUID.fromString(accountId));
+    private void validateSignupInfo(SignupAccount signupAccount) {
+        this.validateExistingAccount(signupAccount.email());
+        this.validateName(signupAccount.name());
+        this.validateEmail(signupAccount.email());
+        this.cpfValidator.validate(signupAccount.cpf());
+
+        if (this.isDriver(signupAccount.isDriver())) {
+            this.validatePlate(signupAccount.carPlate());
+        }
     }
 
     private void validateExistingAccount(String email) {
