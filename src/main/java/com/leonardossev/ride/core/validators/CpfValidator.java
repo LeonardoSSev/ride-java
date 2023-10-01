@@ -1,5 +1,8 @@
 package com.leonardossev.ride.core.validators;
 
+import org.springframework.stereotype.Component;
+
+@Component
 public class CpfValidator implements ICpfValidator {
 
     @Override
