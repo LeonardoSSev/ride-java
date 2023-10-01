@@ -14,17 +14,17 @@ import static org.mockito.Mockito.mock;
 
 public class AccountServiceTest {
 
-    private AccountService accountService;
+    private SignupService accountService;
 
     @BeforeEach
     public void setUp() {
         AccountPersistenceOutboundPort accountPersistenceOutboundPort = mock(AccountPersistenceOutboundPort.class);
 
-        accountService = new AccountService(new CpfValidator(), accountPersistenceOutboundPort);
+        accountService = new SignupService(new CpfValidator(), accountPersistenceOutboundPort);
     }
 
     @Test
-    public void shouldCreatePassenger() throws Exception {
+    public void shouldCreatePassenger() {
         Map<String, Object> input = new HashMap<>();
         input.put("name", "John Doe");
         input.put("email", "john.doe" + Math.random() + "@gmail.com");
