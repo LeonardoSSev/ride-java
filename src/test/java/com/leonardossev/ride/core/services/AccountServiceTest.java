@@ -1,12 +1,16 @@
 package com.leonardossev.ride.core.services;
 
+import com.leonardossev.ride.core.model.Account;
+import com.leonardossev.ride.core.ports.outbound.AccountPersistenceOutboundPort;
 import com.leonardossev.ride.core.validators.CpfValidator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.mock;
 
 public class AccountServiceTest {
 
@@ -14,7 +18,9 @@ public class AccountServiceTest {
 
     @BeforeEach
     public void setUp() {
-        accountService = new AccountService(new CpfValidator());
+        AccountPersistenceOutboundPort accountPersistenceOutboundPort = mock(AccountPersistenceOutboundPort.class);
+
+        accountService = new AccountService(new CpfValidator(), accountPersistenceOutboundPort);
     }
 
     @Test
@@ -26,12 +32,13 @@ public class AccountServiceTest {
         input.put("isPassenger", true);
 
         Map<String, Object> output = accountService.signup(input);
-        Map<String, Object> account = accountService.getAccount(output.get("accountId").toString());
+        Optional<Account> accountOptional = accountService.getAccount(output.get("accountId").toString());
 
-        assertNotNull(account.get("accountId"));
-        assertEquals(input.get("name"), account.get("name"));
-        assertEquals(input.get("email"), account.get("email"));
-        assertEquals(input.get("cpf"), account.get("cpf"));
+        assertTrue(accountOptional.isPresent());
+        Account account = accountOptional.get();
+        assertEquals(input.get("name"), account.name());
+        assertEquals(input.get("email"), account.email());
+        assertEquals(input.get("cpf"), account.cpf());
     }
 
     @Test
