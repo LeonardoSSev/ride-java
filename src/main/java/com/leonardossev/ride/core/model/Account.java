@@ -1,7 +1,7 @@
 package com.leonardossev.ride.core.model;
 
+import com.leonardossev.ride.adapters.inbound.http.dto.SignupAccount;
 import java.sql.Date;
-import java.util.Map;
 import java.util.UUID;
 
 public record Account (
@@ -16,17 +16,17 @@ public record Account (
         boolean isVerified,
         UUID verificationCode
 ){
-    public static Account fromMap(Map<String, Object> map, String accountId, String verificationcode, Date createdAt) {
+    public static Account fromSignupAccount(SignupAccount signupAccount, String accountId, String verificationcode, Date createdAt) {
         return new Account(
                 UUID.fromString(accountId),
-                map.get("name").toString(),
-                map.get("email").toString(),
-                map.get("cpf").toString(),
-                map.get("carPlate") != null ? map.get("carPlate").toString() : "",
-                map.get("isPassenger") != null && Boolean.getBoolean(map.get("isPassenger").toString()),
-                map.get("isDriver") != null && Boolean.getBoolean(map.get("isDriver").toString()),
+                signupAccount.name(),
+                signupAccount.email(),
+                signupAccount.cpf(),
+                signupAccount.carPlate(),
+                signupAccount.isPassenger(),
+                signupAccount.isDriver(),
                 createdAt,
-                map.get("isVerified") != null && Boolean.getBoolean(map.get("isVerified").toString()),
+                false,
                 UUID.fromString(verificationcode)
         );
     }
