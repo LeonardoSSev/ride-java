@@ -1,4 +1,4 @@
-package com.leonardossev.ride.adapters.inbound.http.dto;
+package com.leonardossev.ride.adapters.inbound.http.dto.signup;
 
 public record SignupAccount (
         String name,

@@ -1,6 +1,6 @@
 package com.leonardossev.ride.core.model;
 
-import com.leonardossev.ride.adapters.inbound.http.dto.SignupAccount;
+import com.leonardossev.ride.adapters.inbound.http.dto.signup.SignupAccount;
 import java.sql.Date;
 import java.util.UUID;
 

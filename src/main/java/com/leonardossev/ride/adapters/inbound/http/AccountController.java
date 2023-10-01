@@ -1,6 +1,6 @@
 package com.leonardossev.ride.adapters.inbound.http;
 
-import com.leonardossev.ride.adapters.inbound.http.dto.SignupAccount;
+import com.leonardossev.ride.adapters.inbound.http.dto.signup.SignupAccount;
 import com.leonardossev.ride.core.model.Account;
 import com.leonardossev.ride.core.ports.inbound.GetAccountByIdInboundPort;
 import com.leonardossev.ride.core.ports.inbound.SignupInboundPort;

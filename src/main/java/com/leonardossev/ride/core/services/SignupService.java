@@ -1,6 +1,6 @@
 package com.leonardossev.ride.core.services;
 
-import com.leonardossev.ride.adapters.inbound.http.dto.SignupAccount;
+import com.leonardossev.ride.adapters.inbound.http.dto.signup.SignupAccount;
 import com.leonardossev.ride.core.model.Account;
 import com.leonardossev.ride.core.ports.inbound.SignupInboundPort;
 import com.leonardossev.ride.core.ports.outbound.AccountPersistenceOutboundPort;
@@ -74,7 +74,6 @@ public class SignupService implements SignupInboundPort {
         if (name == null || !name.matches("[a-zA-Z]+ [a-zA-Z]+")) {
             throw new RuntimeException("Invalid email");
         }
-
     }
 
     private void validateEmail(String email) {
