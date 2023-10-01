@@ -4,6 +4,7 @@ import com.leonardossev.ride.adapters.inbound.http.dto.SignupAccount;
 import com.leonardossev.ride.core.model.Account;
 import com.leonardossev.ride.core.ports.inbound.SignupInboundPort;
 import com.leonardossev.ride.core.ports.outbound.AccountPersistenceOutboundPort;
+import com.leonardossev.ride.core.ports.outbound.SendEmailOutboundPort;
 import com.leonardossev.ride.core.validators.ICpfValidator;
 import org.springframework.stereotype.Service;
 import java.sql.Date;
@@ -16,9 +17,14 @@ public class SignupService implements SignupInboundPort {
     ICpfValidator cpfValidator;
     AccountPersistenceOutboundPort accountPersistenceOutboundPort;
 
-    public SignupService(ICpfValidator cpfValidator, AccountPersistenceOutboundPort accountPersistenceOutboundPort) {
+    SendEmailOutboundPort sendEmailOutboundPort;
+
+    public SignupService(ICpfValidator cpfValidator,
+                         AccountPersistenceOutboundPort accountPersistenceOutboundPort,
+                         SendEmailOutboundPort sendEmailOutboundPort) {
         this.cpfValidator = cpfValidator;
         this.accountPersistenceOutboundPort = accountPersistenceOutboundPort;
+        this.sendEmailOutboundPort = sendEmailOutboundPort;
     }
 
     @Override
@@ -32,7 +38,6 @@ public class SignupService implements SignupInboundPort {
 
             Account account = Account.fromSignupAccount(signupAccount, accountId, verificationCode, Date.valueOf(String.valueOf(date.toLocalDate())));
             this.accountPersistenceOutboundPort.save(account);
-
             this.sendEmail(signupAccount.email(), "Verification", "Please verify your code at first login " + verificationCode);
 
             return accountId;
@@ -89,6 +94,6 @@ public class SignupService implements SignupInboundPort {
     }
 
     private void sendEmail(String email, String subject, String message) {
-        System.out.println(email + " " + subject + " " + message);
+        this.sendEmailOutboundPort.send(subject, email, message);
     }
 }
