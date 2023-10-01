@@ -1,7 +1,6 @@
-package com.leonardossev.ride.adapters.persistence.model;
+package com.leonardossev.ride.adapters.outbound.persistence.model;
 
 import com.leonardossev.ride.core.model.Account;
-
 import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;

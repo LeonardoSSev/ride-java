@@ -1,12 +1,11 @@
-package com.leonardossev.ride.adapters.persistence;
+package com.leonardossev.ride.adapters.outbound.persistence;
 
-import com.leonardossev.ride.adapters.persistence.model.AccountEntity;
+import com.leonardossev.ride.adapters.outbound.persistence.model.AccountEntity;
 import com.leonardossev.ride.core.model.Account;
 import com.leonardossev.ride.core.ports.outbound.AccountPersistenceOutboundPort;
 import com.leonardossev.ride.shared.exceptions.PersistenceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
 import java.sql.*;
 import java.util.Optional;
 import java.util.UUID;
