@@ -5,12 +5,14 @@ import com.leonardossev.ride.core.model.Account;
 import com.leonardossev.ride.core.ports.outbound.AccountPersistenceOutboundPort;
 import com.leonardossev.ride.shared.exceptions.PersistenceException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 import java.sql.*;
 import java.util.Optional;
 import java.util.UUID;
 
 @Component
+@Primary
 public class PostgreAccountClientAdapter implements AccountPersistenceOutboundPort {
 
     @Autowired
