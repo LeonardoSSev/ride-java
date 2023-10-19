@@ -16,7 +16,6 @@ public class SignupService implements SignupInboundPort {
 
     ICpfValidator cpfValidator;
     AccountPersistenceOutboundPort accountPersistenceOutboundPort;
-
     SendEmailOutboundPort sendEmailOutboundPort;
 
     public SignupService(ICpfValidator cpfValidator,
@@ -61,7 +60,7 @@ public class SignupService implements SignupInboundPort {
     private void validateExistingAccount(String email) {
         Optional<Account> accountOptional = this.findByEmail(email);
 
-        if (accountOptional.isEmpty()) {
+        if (!accountOptional.isEmpty()) {
             throw new RuntimeException("Account already exists");
         }
     }
