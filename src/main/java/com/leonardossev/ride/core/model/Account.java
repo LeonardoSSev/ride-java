@@ -1,9 +1,12 @@
 package com.leonardossev.ride.core.model;
 
 import com.leonardossev.ride.adapters.inbound.http.dto.signup.SignupAccount;
+import lombok.Builder;
+
 import java.sql.Date;
 import java.util.UUID;
 
+@Builder
 public record Account (
         UUID id,
         String name,
