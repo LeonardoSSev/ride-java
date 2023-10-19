@@ -14,7 +14,6 @@ public class GetAccountByIdService implements GetAccountByIdInboundPort {
 
     public GetAccountByIdService(AccountPersistenceOutboundPort accountPersistenceOutboundPort) {
         this.accountPersistenceOutboundPort = accountPersistenceOutboundPort;
-
     }
 
     @Override
