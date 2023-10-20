@@ -2,7 +2,7 @@ package com.leonardossev.ride.adapters.inbound.http;
 
 import com.leonardossev.ride.adapters.inbound.http.dto.signup.SignupAccount;
 import com.leonardossev.ride.core.model.Account;
-import com.leonardossev.ride.core.ports.inbound.GetAccountByIdInboundPort;
+import com.leonardossev.ride.core.ports.inbound.FindAccountByIdInboundPort;
 import com.leonardossev.ride.core.ports.inbound.SignupInboundPort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -16,11 +16,11 @@ public class AccountController {
 
     private final SignupInboundPort signupInboundPort;
 
-    private final GetAccountByIdInboundPort getAccountByIdInboundPort;
+    private final FindAccountByIdInboundPort findAccountByIdInboundPort;
 
-    public AccountController(SignupInboundPort signupInboundPort, GetAccountByIdInboundPort getAccountByIdInboundPort) {
+    public AccountController(SignupInboundPort signupInboundPort, FindAccountByIdInboundPort findAccountByIdInboundPort) {
         this.signupInboundPort = signupInboundPort;
-        this.getAccountByIdInboundPort = getAccountByIdInboundPort;
+        this.findAccountByIdInboundPort = findAccountByIdInboundPort;
     }
 
     @PostMapping(value = "/signup")
@@ -33,7 +33,7 @@ public class AccountController {
 
     @PostMapping(value = "/{uuid}")
     public ResponseEntity<Account> findAccountById(@PathVariable String uuid) {
-        Optional<Account> optionalAccount = this.getAccountByIdInboundPort.execute(uuid);
+        Optional<Account> optionalAccount = this.findAccountByIdInboundPort.execute(uuid);
         return optionalAccount
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());

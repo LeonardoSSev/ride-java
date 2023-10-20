@@ -1,18 +1,18 @@
 package com.leonardossev.ride.core.services;
 
 import com.leonardossev.ride.core.model.Account;
-import com.leonardossev.ride.core.ports.inbound.GetAccountByIdInboundPort;
+import com.leonardossev.ride.core.ports.inbound.FindAccountByIdInboundPort;
 import com.leonardossev.ride.core.ports.outbound.AccountPersistenceOutboundPort;
 import org.springframework.stereotype.Service;
 import java.util.Optional;
 import java.util.UUID;
 
 @Service
-public class GetAccountByIdService implements GetAccountByIdInboundPort {
+public class FindAccountByIdService implements FindAccountByIdInboundPort {
 
     private final AccountPersistenceOutboundPort accountPersistenceOutboundPort;
 
-    public GetAccountByIdService(AccountPersistenceOutboundPort accountPersistenceOutboundPort) {
+    public FindAccountByIdService(AccountPersistenceOutboundPort accountPersistenceOutboundPort) {
         this.accountPersistenceOutboundPort = accountPersistenceOutboundPort;
     }
 

@@ -3,9 +3,10 @@ package integration;
 import com.leonardossev.ride.adapters.inbound.http.dto.signup.SignupAccount;
 import com.leonardossev.ride.adapters.outbound.persistence.InMemoryAccountClientAdapter;
 import com.leonardossev.ride.core.model.Account;
+import com.leonardossev.ride.core.ports.inbound.FindAccountByIdInboundPort;
 import com.leonardossev.ride.core.ports.outbound.AccountPersistenceOutboundPort;
 import com.leonardossev.ride.core.ports.outbound.SendEmailOutboundPort;
-import com.leonardossev.ride.core.services.GetAccountByIdService;
+import com.leonardossev.ride.core.services.FindAccountByIdService;
 import com.leonardossev.ride.core.services.SignupService;
 import com.leonardossev.ride.core.services.helper.SignupAccountTestsHelper;
 import com.leonardossev.ride.core.validators.CpfValidator;
@@ -21,7 +22,7 @@ import static org.mockito.Mockito.mock;
 public class AccountTest {
 
     private SignupService signupService;
-    private GetAccountByIdService getAccountByIdService;
+    private FindAccountByIdInboundPort findAccountByIdService;
 
     @BeforeEach
     public void setUp() {
@@ -29,7 +30,7 @@ public class AccountTest {
         SendEmailOutboundPort sendEmailOutboundPort = mock(SendEmailOutboundPort.class);
 
         signupService = new SignupService(new CpfValidator(), accountPersistenceOutboundPort, sendEmailOutboundPort);
-        getAccountByIdService = new GetAccountByIdService(accountPersistenceOutboundPort);
+        findAccountByIdService = new FindAccountByIdService(accountPersistenceOutboundPort);
     }
 
     @Test
@@ -37,7 +38,7 @@ public class AccountTest {
         SignupAccount input = SignupAccountTestsHelper.buildSimplePassenger();
 
         String accountId = signupService.execute(input);
-        Optional<Account> accountOptional = getAccountByIdService.execute(accountId);
+        Optional<Account> accountOptional = findAccountByIdService.execute(accountId);
 
         assertTrue(accountOptional.isPresent());
         Account output = accountOptional.get();
@@ -55,7 +56,7 @@ public class AccountTest {
         SignupAccount input = SignupAccountTestsHelper.buildSimpleDriver();
 
         String accountId = signupService.execute(input);
-        Optional<Account> accountOptional = getAccountByIdService.execute(accountId);
+        Optional<Account> accountOptional = findAccountByIdService.execute(accountId);
 
         assertTrue(accountOptional.isPresent());
         Account output = accountOptional.get();
