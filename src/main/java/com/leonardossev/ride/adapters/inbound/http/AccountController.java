@@ -1,7 +1,7 @@
 package com.leonardossev.ride.adapters.inbound.http;
 
 import com.leonardossev.ride.adapters.inbound.http.dto.signup.SignupAccount;
-import com.leonardossev.ride.core.model.Account;
+import com.leonardossev.ride.core.model.Account.Account;
 import com.leonardossev.ride.core.ports.inbound.FindAccountByIdInboundPort;
 import com.leonardossev.ride.core.ports.inbound.SignupInboundPort;
 import org.springframework.http.HttpStatus;

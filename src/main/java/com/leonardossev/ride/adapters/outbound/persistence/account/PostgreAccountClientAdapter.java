@@ -1,7 +1,7 @@
-package com.leonardossev.ride.adapters.outbound.persistence;
+package com.leonardossev.ride.adapters.outbound.persistence.account;
 
 import com.leonardossev.ride.adapters.outbound.persistence.model.AccountEntity;
-import com.leonardossev.ride.core.model.Account;
+import com.leonardossev.ride.core.model.Account.Account;
 import com.leonardossev.ride.core.ports.outbound.AccountPersistenceOutboundPort;
 import com.leonardossev.ride.shared.exceptions.PersistenceException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,13 +44,23 @@ public class PostgreAccountClientAdapter implements AccountPersistenceOutboundPo
     @Override
     public Optional<Account> findById(UUID id) throws PersistenceException {
         PreparedStatement findByIdPreparedStatement = null;
+        PreparedStatement findRequestedRidesPreparedStatement = null;
+        PreparedStatement findRidesPreparedStatement = null;
         try {
             findByIdPreparedStatement = this.connection.prepareStatement("SELECT * FROM cccat13.account WHERE account_id = ?");
             findByIdPreparedStatement.setObject(1, UUID.fromString(id.toString()));
             ResultSet resultSet = findByIdPreparedStatement.executeQuery();
 
             if (resultSet.next()) {
-                return Optional.of(AccountEntity.toAccount(AccountEntity.fromResultSet(resultSet)));
+                findRequestedRidesPreparedStatement = this.connection.prepareStatement("SELECT * FROM cccat13.ride WHERE passenger_id = ?");
+                findRequestedRidesPreparedStatement.setObject(1, UUID.fromString(id.toString()));
+                ResultSet requestedRidesResultSet = findRequestedRidesPreparedStatement.executeQuery();
+
+                findRidesPreparedStatement = this.connection.prepareStatement("SELECT * FROM cccat13.ride WHERE driver_id = ?");
+                findRidesPreparedStatement.setObject(1, UUID.fromString(id.toString()));
+                ResultSet ridesResultSet = findRidesPreparedStatement.executeQuery();
+
+                return Optional.of(AccountEntity.toAccount(AccountEntity.fromResultSet(resultSet, requestedRidesResultSet, ridesResultSet)));
             }
 
             return Optional.empty();
@@ -68,7 +78,7 @@ public class PostgreAccountClientAdapter implements AccountPersistenceOutboundPo
             ResultSet resultSet = findByEmailPreparedStatement.executeQuery();
 
             if (resultSet.next()) {
-                return Optional.of(AccountEntity.toAccount(AccountEntity.fromResultSet(resultSet)));
+                return Optional.of(AccountEntity.toAccount(AccountEntity.fromResultSet(resultSet, null, null)));
             }
 
             return Optional.empty();

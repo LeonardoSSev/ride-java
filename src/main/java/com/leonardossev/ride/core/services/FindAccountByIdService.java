@@ -1,6 +1,6 @@
 package com.leonardossev.ride.core.services;
 
-import com.leonardossev.ride.core.model.Account;
+import com.leonardossev.ride.core.model.Account.Account;
 import com.leonardossev.ride.core.ports.inbound.FindAccountByIdInboundPort;
 import com.leonardossev.ride.core.ports.outbound.AccountPersistenceOutboundPort;
 import org.springframework.stereotype.Service;

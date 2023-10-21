@@ -1,7 +1,7 @@
 package com.leonardossev.ride.core.services;
 
 import com.leonardossev.ride.adapters.inbound.http.dto.signup.SignupAccount;
-import com.leonardossev.ride.core.model.Account;
+import com.leonardossev.ride.core.model.Account.Account;
 import com.leonardossev.ride.core.ports.inbound.SignupInboundPort;
 import com.leonardossev.ride.core.ports.outbound.AccountPersistenceOutboundPort;
 import com.leonardossev.ride.core.ports.outbound.SendEmailOutboundPort;
@@ -29,11 +29,11 @@ public class SignupService implements SignupInboundPort {
     @Override
     public String execute(SignupAccount signupAccount) {
         try {
+            this.validateSignupInfo(signupAccount);
+
             String accountId = UUID.randomUUID().toString();
             String verificationCode = UUID.randomUUID().toString();
             LocalDateTime date = LocalDateTime.now();
-
-            this.validateSignupInfo(signupAccount);
 
             Account account = Account.fromSignupAccount(signupAccount, accountId, verificationCode, Date.valueOf(String.valueOf(date.toLocalDate())));
             this.accountPersistenceOutboundPort.save(account);

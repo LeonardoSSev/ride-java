@@ -1,6 +1,6 @@
 package com.leonardossev.ride.core.ports.outbound;
 
-import com.leonardossev.ride.core.model.Account;
+import com.leonardossev.ride.core.model.Account.Account;
 import com.leonardossev.ride.shared.exceptions.PersistenceException;
 
 import java.util.Optional;

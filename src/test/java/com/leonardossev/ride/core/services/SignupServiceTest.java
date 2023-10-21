@@ -1,7 +1,7 @@
 package com.leonardossev.ride.core.services;
 
 import com.leonardossev.ride.adapters.inbound.http.dto.signup.SignupAccount;
-import com.leonardossev.ride.core.model.Account;
+import com.leonardossev.ride.core.model.Account.Account;
 import com.leonardossev.ride.core.ports.outbound.AccountPersistenceOutboundPort;
 import com.leonardossev.ride.core.ports.outbound.SendEmailOutboundPort;
 import com.leonardossev.ride.core.services.helper.SignupAccountTestsHelper;

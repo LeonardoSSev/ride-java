@@ -1,33 +1,29 @@
-package com.leonardossev.ride.adapters.outbound.persistence;
+package com.leonardossev.ride.adapters.outbound.persistence.account;
 
+import com.leonardossev.ride.adapters.outbound.persistence.InMemoryPersistenceBase;
 import com.leonardossev.ride.adapters.outbound.persistence.model.AccountEntity;
-import com.leonardossev.ride.core.model.Account;
+import com.leonardossev.ride.core.model.Account.Account;
 import com.leonardossev.ride.core.ports.outbound.AccountPersistenceOutboundPort;
-import com.leonardossev.ride.shared.exceptions.PersistenceException;
 import org.springframework.stereotype.Component;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 
 @Component
-public class InMemoryAccountClientAdapter implements AccountPersistenceOutboundPort {
-    
-    private static final Map<UUID, Account> accounts = new ConcurrentHashMap<>();
+public class InMemoryAccountClientAdapter extends InMemoryPersistenceBase implements AccountPersistenceOutboundPort {
 
     @Override
     public boolean save(Account account) {
-        InMemoryAccountClientAdapter.accounts.put(account.id(), account);
+        AccountEntity accountEntity = AccountEntity.fromAccount(account);
+        InMemoryAccountClientAdapter.accounts.put(account.id(), accountEntity);
         return true;
     }
 
     @Override
     public Optional<Account> findById(UUID id) {
-        return Optional.ofNullable(InMemoryAccountClientAdapter.accounts.get(id));
+        AccountEntity accountEntity = InMemoryAccountClientAdapter.accounts.get(id);
+
+        return Optional.ofNullable(AccountEntity.toAccount(accountEntity));
     }
 
     @Override
@@ -36,7 +32,8 @@ public class InMemoryAccountClientAdapter implements AccountPersistenceOutboundP
                 .values()
                 .stream()
                 .filter(account -> account.email().equalsIgnoreCase(email))
-                .findFirst();
+                .findFirst()
+                .map(AccountEntity::toAccount);
     }
 
 }
