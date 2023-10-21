@@ -1,9 +1,11 @@
 package com.leonardossev.ride.core.ports.inbound;
 
-import java.util.UUID;
+import com.leonardossev.ride.core.model.ride.Ride;
+
+import java.util.Optional;
 
 public interface FindRideByIdInboundPort {
 
-    String execute(UUID rideId);
+    Optional<Ride> execute(String rideId);
 
 }
