@@ -1,8 +1,8 @@
 package integration;
 
 import com.leonardossev.ride.adapters.inbound.http.dto.signup.SignupAccount;
-import com.leonardossev.ride.adapters.outbound.persistence.InMemoryAccountClientAdapter;
-import com.leonardossev.ride.core.model.Account;
+import com.leonardossev.ride.adapters.outbound.persistence.account.InMemoryAccountClientAdapter;
+import com.leonardossev.ride.core.model.Account.Account;
 import com.leonardossev.ride.core.ports.inbound.FindAccountByIdInboundPort;
 import com.leonardossev.ride.core.ports.outbound.AccountPersistenceOutboundPort;
 import com.leonardossev.ride.core.ports.outbound.SendEmailOutboundPort;
@@ -11,6 +11,7 @@ import com.leonardossev.ride.core.services.SignupService;
 import com.leonardossev.ride.core.services.helper.SignupAccountTestsHelper;
 import com.leonardossev.ride.core.validators.CpfValidator;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.util.Optional;
@@ -34,6 +35,7 @@ public class AccountTest {
     }
 
     @Test
+    @DisplayName("Should create a passenger")
     public void shouldCreatePassenger() {
         SignupAccount input = SignupAccountTestsHelper.buildSimplePassenger();
 
@@ -52,6 +54,7 @@ public class AccountTest {
     }
 
     @Test
+    @DisplayName("Should create a driver")
     public void shouldCreateDriver() {
         SignupAccount input = SignupAccountTestsHelper.buildSimpleDriver();
 
@@ -70,6 +73,7 @@ public class AccountTest {
     }
 
     @Test
+    @DisplayName("Should not create an account with an invalid name")
     public void shouldNotCreatePassengerWithInvalidName() {
         SignupAccount input = SignupAccountTestsHelper.buildPassengerWithInvalidName();
 
@@ -77,13 +81,15 @@ public class AccountTest {
     }
 
     @Test
+    @DisplayName("Should not create an account with an invalid CPF")
     public void shouldNotCreatePassengerWithInvalidCpf() {
         SignupAccount input = SignupAccountTestsHelper.buildPassengerWithInvalidCpf();
 
-        assertThrows(Exception.class, () -> signupService.execute(input), "Invalid cpf");
+        assertThrows(Exception.class, () -> signupService.execute(input), "Invalid CPF");
     }
 
     @Test
+    @DisplayName("Should not create an account with an invalid email")
     public void shouldNotCreatePassengerWithInvalidEmail() {
         SignupAccount input = SignupAccountTestsHelper.buildPassengerWithInvalidEmail();
 
@@ -91,6 +97,7 @@ public class AccountTest {
     }
 
     @Test
+    @DisplayName("Should not create a driver account with an invalid car plate")
     public void shouldNotCreateDriverWithInvalidCarPlate() {
         SignupAccount input = SignupAccountTestsHelper.buildDriverWithInvalidCarPlate();
 
@@ -98,6 +105,7 @@ public class AccountTest {
     }
 
     @Test
+    @DisplayName("Should not create duplicate accounts")
     public void shouldNotCreateDuplicatePassenger() {
         SignupAccount input = SignupAccountTestsHelper.buildSimplePassenger();
 
