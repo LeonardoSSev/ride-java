@@ -14,10 +14,10 @@ public interface RidePersistenceOutboundPort {
 
     boolean update(Ride ride) throws PersistenceException;
 
-    Optional<Ride> findRideById(UUID id) throws PersistenceException;
+    Optional<Ride> findById(UUID id) throws PersistenceException;
 
-    List<Ride> findInProgressRidesFromPassenger(UUID passengerId) throws PersistenceException;
+    List<Ride> findAllInProgressFromPassenger(UUID passengerId) throws PersistenceException;
 
-    List<Ride> findInProgressRidesFromDriver(UUID driverId) throws PersistenceException;
+    List<Ride> findAllInProgressFromDriver(UUID driverId) throws PersistenceException;
 
 }
